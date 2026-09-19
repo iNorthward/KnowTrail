@@ -1,0 +1,1 @@
+请核对本项目 AGENTS.md、实际启用的 MDC、workflow/task-start.md 和 workflow/scripts 的调用。根据当前规则更新 workflow/dashboard/page.template.html 中的判档、场景和检查条件，再运行 workflow/dashboard/update.sh。检查页面与规则含义一致，不要仅重新生成快照就宣称语义已核验。不要读取 local 私有规则到公开 HTML。

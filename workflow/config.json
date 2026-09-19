@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "project_name": "知序 · KnowTrail",
+  "wiki_root": "wiki",
+  "version_dir": "workflow/changes",
+  "database": "app",
+  "packs": [
+    "java",
+    "wiki",
+    "index"
+  ],
+  "build_command": [],
+  "build_args": [],
+  "offline": false,
+  "hot_tables": [],
+  "checks": [],
+  "java_version": null,
+  "wiki_review_days": null
+}

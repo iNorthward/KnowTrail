@@ -1,0 +1,19 @@
+.idea/
+__pycache__/
+*.pyc
+.DS_Store
+**/target/
+.cursor/rules/local/*
+!.cursor/rules/local/.gitkeep
+wiki/.agent/
+.venv/
+.env
+.env.*
+!.env.example
+**/.gradle/
+**/build/
+!workflow/scripts/build/
+!workflow/scripts/build/**
+
+# Local agent progress, evidence and temporary files
+/.local/

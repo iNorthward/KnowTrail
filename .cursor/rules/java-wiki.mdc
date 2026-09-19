@@ -1,0 +1,32 @@
+---
+description: 【pack: wiki】Markdown 知识库维护、五类模板、索引和证据
+globs:
+  - wiki/**
+alwaysApply: false
+---
+
+# Wiki 维护
+
+Cursor 按路径加载；改表/关联或完整任务需要知识沉淀时，即使尚未打开 Wiki 也须读取本规则。单点优先更新已有资料，不为流程完整新建专题。轻量配置/数据修改不新增专题；有规则未覆盖的纠正时才追加待沉淀。
+
+## 内容维护
+
+1. 先检索已有主题，能更新就不另开一篇。
+2. 按实际业务模块和子领域归档，维护模块 README 和 `wiki/index.md` 的对应分组。system 只放跨业务系统知识，不放工作流操作手册。链接使用 `[[模块/文件名]]`。
+3. 表/字段/索引变化同步 `wiki/database/index.md` 的对应表段落；关联变化记录真实来源与语义，不凭字段名猜 JOIN。
+4. 调度行为变化更新实际项目的任务说明；本体不预置调度平台和任务清单。
+5. bugfix 提供 symptoms，索引同一行包含症状与该文档链接。
+
+## 文档格式
+
+公共头部为 title/module/type/updated/sources；正文严格按 `wiki/templates/schema.json` 的五类结构。模板和写法见 `workflow/guides/wiki-doc-template.md`。bugfix 的章节是现象、影响、根因、修复、回归点；其他类型同样不得只写“概述”代替标准正文。
+
+根索引、数据库字典、待沉淀记录使用 schema 明确列出的专用结构。不得靠新增例外绕开格式检查。模板目录不是已完成的知识专题，跨会话记录使用 workflow/templates/handoff.md。
+
+YAML 是元数据唯一来源；正文标题和信息区供预览显示。修改头部后运行 `python3 workflow/scripts/wiki/wiki_metadata.py --write` 同步，禁止两边手工维护不同信息。
+
+sources 必须可定位；verified 只在真正核对来源后填写。内容未知就明确记录未知，不从模板示例推断业务事实。
+
+## 检查
+
+Wiki 变更执行 `workflow/scripts/wiki/lint-wiki-format.sh`、`lint-wiki-index.sh`、`lint-wiki-symptoms.sh`。完整收尾包含这些检查；定期复核提醒默认关闭，长期未更新不代表错误，不要求刷新日期；提醒及其执行异常都不阻断交付，不能代替内容核验。

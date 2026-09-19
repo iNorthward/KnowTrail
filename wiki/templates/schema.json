@@ -1,0 +1,74 @@
+{
+  "required": [
+    "title",
+    "module",
+    "type",
+    "updated",
+    "sources"
+  ],
+  "types": {
+    "concept": [
+      "用途",
+      "核心规则",
+      "数据与流程",
+      "边界",
+      "相关链接"
+    ],
+    "pattern": [
+      "适用场景",
+      "标准做法",
+      "示例",
+      "禁止事项",
+      "验证"
+    ],
+    "bugfix": [
+      "现象",
+      "影响",
+      "根因",
+      "修复",
+      "回归点"
+    ],
+    "decision": [
+      "背景",
+      "约束",
+      "方案比较",
+      "决策",
+      "影响与验收"
+    ],
+    "guide": [
+      "前提",
+      "步骤",
+      "示例",
+      "验证",
+      "常见问题"
+    ]
+  },
+  "special_documents": {
+    "index.md": {
+      "type": "index",
+      "headings": [
+        "用途",
+        "业务模块",
+        "系统与技术支撑",
+        "公共知识",
+        "症状 → 模块"
+      ]
+    },
+    "database/index.md": {
+      "type": "database",
+      "headings": [
+        "用途",
+        "维护规则",
+        "表结构"
+      ]
+    },
+    "common/weekly-summary.md": {
+      "type": "inbox",
+      "headings": [
+        "用途",
+        "待沉淀",
+        "已处理"
+      ]
+    }
+  }
+}

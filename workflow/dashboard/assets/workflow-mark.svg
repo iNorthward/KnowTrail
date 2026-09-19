@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 104 104" role="img" aria-labelledby="title">
+  <title id="title">KnowTrail · 负形 M</title>
+  <g transform="translate(4 5)">
+    <path fill="#343631" d="M8 51V32Q8 27 12 23L23 12Q28 7 36 7H54Q59 7 62 13L71 32Q63 30 58 36Q55 39 54 44Q52 32 42 32Q36 32 31 37Z"/>
+    <path fill="#bd7358" d="M61 7H76Q83 7 88 13L91 17Q94 22 94 29V49L85 58Q82 61 79 60Q75 59 75 54V43Q75 37 73 34L65 17Q63 11 61 7Z"/>
+    <path fill="#343631" d="M8 60Q8 56 12 52L22 44Q27 40 31 44Q33 46 33 51V66H76Q83 66 89 60L94 55V73Q94 79 89 83L84 87Q80 90 74 90H29Q23 90 19 86L12 79Q8 75 8 69Z"/>
+  </g>
+</svg>
