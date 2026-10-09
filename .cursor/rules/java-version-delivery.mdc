@@ -37,6 +37,6 @@ alwaysApply: false
 
 ## 可选检查器
 
-`workflow/templates/version-sql.md` 保留一种“版本目录 + 正向/回滚段 + 冻结”的交付示例及配套检查器，**默认不启用**。只有使用者选择该格式后才在 config 的 packs 中启用 `version-sql` 并填写实际目录、逻辑库和目标版本。此时该示例的检查才成为门禁。
+`workflow/templates/version-sql.md` 保留一种“版本目录 + 正向/回滚段 + 冻结”的交付示例及配套检查器，**默认不启用**。只有使用者选择该格式后才在 config 的 packs 中启用 `version-sql` 并填写实际目录、逻辑库和目标版本。此时该示例的检查才成为门禁。启用 `version-sql` 时必须同时启用 `wiki`，否则加载配置直接失败。未启用时 `lint-version-sql.sh` 退出 0，不要为了让它变成门禁而单独加上这个 pack。
 
 读取本文件不等于启用示例。已经使用其他迁移机制的项目应配置自己的检查，不套用示例约束。

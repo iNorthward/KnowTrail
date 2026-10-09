@@ -1,27 +1,28 @@
 # Agent 入口
 
-本文件是工作流的单一入口，负责规则路由与加载时机。正文在 `.cursor/rules/*.mdc`；不在此复制另一套流程。
+正文在 `.cursor/rules/*.mdc`。档位和收尾命令只认 `.cursor/rules/agent-workflow.mdc`。用户只描述需求；Agent 自判档位，不让用户选档、执行脚本或确认流程。Git 提交只在用户明确要求时做。
 
-**用户只提需求。** Agent 按内核五问自判轻量、单点或完整，主动阅读、实现和检查。档位只认 `agent-workflow.mdc`。Git 提交仅在用户要求时执行，标题与正文使用中文（详见内核），无独立提交流程或额外命令入口。
+## 本仓库验证
 
-## 接入任务入口
+本仓库没有业务应用根 POM。不要在仓库根执行 `mvn`、`./mvnw`、`mvn compile` 或 `mvn test`。要验证 Java 构建能力时，使用隔离的临时 Maven 工程，不要伪造本仓库能编译。
 
-用户明确要求把 KnowTrail 接入某个项目时，先读取 `workflow/guides/project-adoption.md`，按用户选择的“完整接入”或“针对项目适配”执行。由 Agent 调查、实施、验证并交付结果，不要求用户手动填写配置、复制文件或运行检查。用户未选择时询问方式；普通开发任务不走接入初始化。
+```bash
+python3 -m unittest discover -s workflow/tests -v
+bash workflow/scripts/finish-audit.sh
+python3 workflow/dashboard/build-workflow-page.py --check
+```
 
-两种接入都携带 `workflow/project-setup.md`，由 Agent 收集证据、记录缺口、落实已确认约定；不根据 DO 等源码命名自动定制规则。基础接入、项目补充、业务验证分别报告。
+改了 `wiki/**` 或 `workflow/guides/*.md` 的 YAML 头之后，先执行 `python3 workflow/scripts/wiki/wiki_metadata.py --write`，再跑上面的收尾。`<!-- wiki:metadata:start -->` 与 `<!-- wiki:metadata:end -->` 之间的预览区由该命令生成。手改预览区，或只改 YAML 不重写预览，`lint-wiki-format.sh` 失败。
 
-本段是 KnowTrail 来源仓库的接入任务路由。整合到目标项目时按其上下文保留必要维护入口，不将本仓库“无业务 POM”等维护说明照搬过去。
+`workflow/dashboard/index.html` 由 `python3 workflow/dashboard/build-workflow-page.py` 生成。不要手改这个文件。`--check` 发现页面和当前规则不一致；`finish-audit.sh` 和 `ci-lint.sh` 不跑这项检查。改了规则、脚本或 `workflow/dashboard/page.template.html` 后要重新生成。
 
-## 分层与覆盖
+环境：Bash、Python 3.9+、Git、ripgrep。只用 Python 标准库，不安装第三方包。本仓库不配置 GitHub Actions。CI 要跑时用内核收尾里的 `ci-lint.sh`，不要另写一套检查。
 
-1. L1 内核：`.cursor/rules/agent-workflow.mdc`。
-2. L2 规则：下表启用的 Java、Wiki、索引和版本交付规则。
-3. L3 团队补充：`.cursor/rules/custom/*.mdc`，只追加，随项目维护。
-4. L4 个人补充：`.cursor/rules/local/*.mdc`，只追加，不进入公开内容。
+## 规则分层
 
-后层不能静默关闭已启用规则的硬检查。`workflow/config.json` 只配置检查路径、构建和扩展，不代替规则正文。领域检查的启用清单与配置必须一致；项目约定由使用者决定，Agent 根据有效资料整理落实，空白不表示接受预设标准。
-
-## 已启用规则与加载信号
+1. L1 内核：`.cursor/rules/agent-workflow.mdc`（`alwaysApply`）。
+2. L2 为下表。`workflow/config.json` 的 `packs` 只能是 `java`、`wiki`、`index`、`version-sql` 的子集，并且和本表一致。启用或停用时同时改本表、对应 MDC 和 `packs`，不能只改一处。
+3. L3 `.cursor/rules/custom/`、L4 `.cursor/rules/local/` 只追加，不能关掉已启用包的硬检查。
 
 | 规则 | 语义钩子 / 路径 | 权威文件 |
 |---|---|---|
@@ -30,47 +31,18 @@
 | index | Mapper、原生 SQL、建表，或 Job/批量扫描 | `.cursor/rules/java-index.mdc` |
 | 结构交付 | SQL/结构变化时核对项目交付约定，不自动启用示例格式 | `.cursor/rules/java-version-delivery.mdc` |
 
-`version-sql` 示例检查器默认关闭；只有使用者明确选择该交付格式后才启用。读取结构交付规则不等于启用检查器。
+`version-sql` 默认关闭。配置里写上 `version-sql` 时必须同时有 `wiki`，否则加载配置直接失败。读取结构交付规则不等于启用检查器。
 
-本体未定义具体业务的受保护表名单、鉴权注解或配置常量。遇到这些内容先从实际项目证据确认，再按已有补充规则处理。
+本仓库没有受保护表名单、鉴权注解或配置常量。没有资料时不要编过滤字段、热表或 JOIN。`wiki/system` 只放跨业务系统知识，不放工作流操作手册；步骤放 `workflow/`。
 
-## IDE 并存
+## 加载
 
-Cursor 根据 MDC 的 `alwaysApply` / `globs` 加载。Codex 开任务主动读取：
+Cursor 按 MDC 的 `alwaysApply` / `globs` 注入。Codex 没有 glob，开任务读 `workflow/task-start.md` 的判档和加载节。中途范围扩大就补读新命中的规则。脚本输出的 TAGS 只是线索，没有标签不能跳过实际行为对应的规则。
 
-1. 本文件。
-2. `.cursor/rules/agent-workflow.mdc`。
-3. `workflow/task-start.md` 的判档部分。
-4. 计划修改路径与语义钩子命中的全部规则，以及已有 custom/local 补充。
+路径索引在 `workflow/README.md`。只有用户明确要求把 KnowTrail 接进某个项目时，才读 `workflow/guides/project-adoption.md`；两种接法都带 `workflow/project-setup.md`。普通开发不走接入。不要把本仓库「没有业务 POM」写进目标项目的入口。
 
-**适用规则取并集，钩子优先于路径。** 修改 Entity 时读取 Java 项目规范；确有结构变化再加载交付、Wiki 与索引规则。轻量只停止完整阅读，不停止规则路由。加载规则与执行检查分开判断：例外允许跳过具体检查，不等于无需阅读。
+## 收尾与维护
 
-中途范围扩大，立即补读新命中的规则，不等用户提醒。脚本 TAGS 只提供识别线索，缺少标签不能免除按实际行为加载规则和核查的责任。
+收尾命令只认内核「收尾」表。改了规则、脚本或模板之后，跑「本仓库验证」里的命令，并重新生成看板。回归测试在 `workflow/tests/`，不默认复制到接入项目。产品说明只写当前能力和用法，不写内部进度或未落实的承诺。
 
-## 路径
-
-| 用途 | 路径 |
-|---|---|
-| 工作流说明 / 开任务 | `workflow/README.md`、`workflow/task-start.md` |
-| 内核和领域规则 | `.cursor/rules/` |
-| 检查与构建 | `workflow/scripts/` |
-| 检查配置 | `workflow/config.json` |
-| 审计 / 交付 / handoff 模板 | `workflow/templates/` |
-| Wiki 使用说明 / 分层索引 / 文档规范 | `wiki/README.md`、`wiki/index.md`、`workflow/guides/wiki-doc-template.md` |
-| 完整任务阅读集 / 路由 | `workflow/guides/agent-essentials.md`、`workflow/guides/task-routing.md` |
-| 待沉淀 / 跨会话记录 | `wiki/common/weekly-summary.md`、`wiki/.agent/` |
-| 工作流看板（附带） | `workflow/dashboard/` |
-
-## 自动收尾
-
-收尾组合只认内核表。完整任务执行 `workflow/scripts/finish-audit.sh`，检查失败先修复，再形成变更审计与最终交付。Wiki 变更必须通过模板、索引和症状检查。有规则未覆盖的用户纠正才追加待沉淀；不自定级。
-
-本仓库本身维护工作流和 Markdown Wiki，没有业务应用的根 POM。修改本体按实际范围运行脚本与回归，不伪造 Java 构建；验证构建能力时使用隔离的临时 Maven 工程。
-
-## 工程维护
-
-修改规则、脚本或模板后核对入口、引用和看板；实际检查结果写入本次交付。回归测试在 `workflow/tests/`，仅用于维护工作流，不默认复制到接入项目。产品说明描述当前能力和用法，不加入内部进度、未落实的服务承诺或开发对话记录。
-
-## 本地工作记录
-
-开发进度、计划、接入记录、验证日志、临时脚本和回滚备份统一放在项目根 `.local/knowtrail/`，由 `/.local/` 忽略，不进入产品目录或 Git。接入目标项目同样合并此忽略项；project-setup.md 只放通用规程，具体补充状态写本地记录。稳定的规则和业务知识仍维护在正式文件，不能把必要规范藏进临时目录。
+开发进度、接入记录、验证日志和回滚备份放项目根 `.local/knowtrail/`，由 `/.local/` 忽略，不进 Git。必要规范写在正式文件里，不能只放在这个目录。

@@ -7,7 +7,7 @@ alwaysApply: false
 
 # Wiki 维护
 
-Cursor 按路径加载；改表/关联或完整任务需要知识沉淀时，即使尚未打开 Wiki 也须读取本规则。单点优先更新已有资料，不为流程完整新建专题。轻量配置/数据修改不新增专题；有规则未覆盖的纠正时才追加待沉淀。
+改表、改关联，或完整任务要把知识留下来时，即使当前没有打开 `wiki/**`，也要读本规则。Cursor 的 glob 不会因为提到了表就注入本文件。专题该不该新建，只认内核三档表。
 
 ## 内容维护
 
@@ -29,4 +29,4 @@ sources 必须可定位；verified 只在真正核对来源后填写。内容未
 
 ## 检查
 
-Wiki 变更执行 `workflow/scripts/wiki/lint-wiki-format.sh`、`lint-wiki-index.sh`、`lint-wiki-symptoms.sh`。完整收尾包含这些检查；定期复核提醒默认关闭，长期未更新不代表错误，不要求刷新日期；提醒及其执行异常都不阻断交付，不能代替内容核验。
+改了 `wiki/**` 或 `workflow/guides/*.md`，任何档位都执行 `workflow/scripts/wiki/lint-wiki-format.sh`、`lint-wiki-index.sh`、`lint-wiki-symptoms.sh`。失败阻断；完整收尾已经包含这三项。`lint-wiki-stale.sh` 默认关闭，超期只输出 INFO，提醒脚本异常也不阻断，不能代替内容核验。长期未更新不代表错误，不要求刷新日期。

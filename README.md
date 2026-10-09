@@ -26,10 +26,10 @@
 ## 项目结构
 
 ```text
-AGENTS.md                  Agent 入口：规则分层、加载路由、收尾
+AGENTS.md                  Agent 入口：启用的规则、本仓库验证、生成物
 .cursor/rules/             内核 + 项目规范入口
 workflow/
-  task-start.md            五问判档与最小阅读
+  task-start.md            五问、加载顺序与最小阅读
   project-setup.md         Agent 收集、确认与落实项目资料的规程
   guides/                  工作步骤和场景核查说明
   scripts/                 收尾入口 + audit/build/java/sql/wiki/lib 分类
@@ -99,19 +99,9 @@ python3 workflow/dashboard/serve.py
 
 ## 开发与验证
 
-脚本使用 Bash、Python 3.9+、Git 和 ripgrep。Java 构建默认支持 Maven/Maven Wrapper，其他工具使用自定义命令；JDK 遵循项目环境，不固定版本；Windows 入口通过 Git Bash 执行，平台验证范围见 [脚本检查说明](workflow/guides/gate-review.md)。阅读 Markdown 和离线看板不需要构建 Java。
+脚本使用 Bash、Python 3.9+、Git 和 ripgrep，只用 Python 标准库。JDK 遵循项目环境，不固定版本；Windows 入口通过 Git Bash 执行，平台验证范围见 [脚本检查说明](workflow/guides/gate-review.md)。阅读 Markdown 和离线看板不需要构建 Java。
 
-```bash
-python3 -m unittest discover -s workflow/tests -v
-bash workflow/scripts/finish-audit.sh
-python3 workflow/dashboard/build-workflow-page.py --check
-```
-
-本仓库没有业务应用 POM。Java 编译回归在临时 Maven 工程执行；文档更新先同步 YAML 对应的可见信息区，再运行检查：
-
-```bash
-python3 workflow/scripts/wiki/wiki_metadata.py --write
-```
+本仓库的验证命令、不能在仓库根使用的构建方式，以及 Wiki 预览区和看板页面这两类生成物，写在 [AGENTS.md](AGENTS.md)「本仓库验证」。接入后的项目仍用自己的构建命令，见 [脚本说明](workflow/scripts/README.md)。
 
 ## 继续了解
 
@@ -119,7 +109,7 @@ python3 workflow/scripts/wiki/wiki_metadata.py --write
 
 [Agent 接入执行指南](workflow/guides/project-adoption.md) · [Agent 项目补充规程](workflow/project-setup.md)
 
-工作流脚本、看板和回归测试使用 Python 标准库，无需安装 Python 第三方依赖。项目检查在本地执行，不配置 GitHub 自动检查。
+项目检查在本地执行，不配置 GitHub 自动检查。
 
 ## License
 
